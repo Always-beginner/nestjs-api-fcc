@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model nick {
+  id   Int     @id
+  name String?
+}
+
+model User{
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  email   String  @unique
+  hash    String
+
+  firstName   String?
+  lastName    String?
+
+  bookmaks  Bookmark[]
+  @@map("users")
+}
+model Bookmark{
+  id           Int      @id    @default(autoincrement())
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  title   String
+  desc    String?
+  link    String
+
+  userId Int
+  user  User @relation(fields: [userId],references: [id])
+
+  @@map("bookmarks")
+}
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model typeorm_metadata {
+  type     String  @db.VarChar
+  database String? @db.VarChar
+  schema   String? @db.VarChar
+  table    String? @db.VarChar
+  name     String? @db.VarChar
+  value    String?
+
+  @@ignore
+}
